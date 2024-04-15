@@ -1,5 +1,5 @@
 grafana:
-  defaultDashboardsEnabled: false
+  defaultDashboardsEnabled: true
   service:
     type: LoadBalancer
 
