@@ -2,6 +2,7 @@
 Easily scalable helloworld app (python flask) with postgresql database. 
 
 helloworld application is available at http://35.237.46.18/
+
 monitoring is available at http://34.138.124.61/
 
 login using the default account for the kube-prom-stack
