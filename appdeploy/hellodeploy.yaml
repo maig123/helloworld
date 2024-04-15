@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-deployment
+  labels:
+    app: helloworld
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - name: helloworld
+        image: maig123/helloworld:1.1
+        ports:
+        - containerPort: 5000
+        env: 
+        - name: POSTGRES_HOST
+          value: "database-postgresql"
+        - name: DATABASE_NAME
+          value: "postgres"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: database-postgresql
+              key: postgres-password      
+
+  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-service
+  labels:
+    app: helloworld
+spec:
+  type: LoadBalancer
+  selector:
+    app: helloworld
+  ports:
+    - name: flask
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: helloworld-flask-monitor
+  labels:
+    app: helloworld
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: helloworld
+  namespaceSelector:
+    matchNames:
+    - helloworld
+  endpoints:
+  - port: flask
+    path: /metrics
+    interval: 15s

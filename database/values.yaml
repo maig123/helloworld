@@ -1,0 +1,11 @@
+# Database will be installed with the bitnami/postgresql chart 
+# initscript 
+primary:
+  initdb:
+    scripts:
+      init.sql: |
+        \c postgres
+        CREATE TABLE hello ( content TEXT NULL );
+        INSERT INTO hello VALUES ('helloworld');
+
+
