@@ -33,7 +33,7 @@ Create Google Project
 
 # discussion on work
 ### helm/kubernetes integration into terraform 
-To make it run together, we can actually providers for helm and kubernetes in terraform to install the helm charts and applications through terraform. However, it is better to have ArgoCD setup and configured to a git repository and chart repository where it can load the values.yaml and charts from there since it can be awkward to manage those things with terraform. 
+To make it run together, we can actually use providers for helm and kubernetes in terraform to install the helm charts and applications through terraform. However, it is better to have ArgoCD setup and configured to a git repository and chart repository where it can load the values.yaml and charts from there since it can be awkward to manage those things with terraform. 
 
 ### use of GKE modules
 Very basic deployment for GKE. K8S is great for applications anticipating large scale growth. The GKE module itself might not be suitable for all deployments depending on cloud and security constraints. 
