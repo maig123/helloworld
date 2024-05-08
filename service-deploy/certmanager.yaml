@@ -1,0 +1,51 @@
+# issuer-lets-encrypt-staging.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-staging
+  namespace: istio-ingress
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: maig123@gmail.com 
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - http01:
+        ingress: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rabbitone-certificate
+  namespace: istio-ingress
+spec:
+  secretName: rabbitone-certificate
+  issuerRef:
+    name: letsencrypt-staging
+  commonName: rabbitone.io
+  dnsNames:
+  - rabbitone.io
+
+---
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: helloworld-gateway
+  namespace: istio-ingress
+spec:
+  # The selector matches the ingress gateway pod labels.
+  # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+  selector:
+    istio: ingress
+  servers:
+  - port:
+      number: 443
+      name: https-default
+      protocol: HTTPS
+    hosts:
+    - rabbitone.io
+    tls:
+      mode: SIMPLE
+      credentialName: rabbitone-certificate
