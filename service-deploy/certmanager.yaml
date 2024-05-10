@@ -14,21 +14,39 @@ spec:
     - http01:
         ingress: {}
 ---
+# issuer-lets-encrypt-production.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-production
+  namespace: istio-ingress
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: maig123@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-production
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: istio
+
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: rabbitone-certificate
+  name: rabbitone-certificate-prod
   namespace: istio-ingress
 spec:
-  secretName: rabbitone-certificate
+  secretName: rabbitone-certificate-prod
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-production
   commonName: rabbitone.io
   dnsNames:
   - rabbitone.io
 
----
 
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -41,6 +59,12 @@ spec:
     istio: ingress
   servers:
   - port:
+      number: 80
+      name: http-default
+      protocol: HTTP
+    hosts:
+    - rabbitone.io
+  - port:
       number: 443
       name: https-default
       protocol: HTTPS
@@ -48,4 +72,26 @@ spec:
     - rabbitone.io
     tls:
       mode: SIMPLE
-      credentialName: rabbitone-certificate
+      credentialName: rabbitone-certificate-prod
+
+
+--- 
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: certmanager
+  namespace: istio-ingress
+spec:
+  hosts:
+  - "rabbitone.io"
+  gateways:
+  - istio-ingress/helloworld-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /.well-known/
+    route:
+    - destination:
+        port:
+          number: 8089
+        host: cm-acme-http-solver-pjhrt

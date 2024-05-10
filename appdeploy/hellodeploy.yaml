@@ -41,14 +41,15 @@ metadata:
   labels:
     app: helloworld
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: helloworld
   ports:
     - name: flask
       protocol: TCP
-      port: 80
+      port: 8000
       targetPort: 5000
+    
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -69,3 +70,25 @@ spec:
   - port: flask
     path: /metrics
     interval: 15s
+
+
+--- 
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: helloworld
+spec:
+  hosts:
+  - "rabbitone.io"
+  gateways:
+  - istio-ingress/helloworld-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: helloworld-service
+
