@@ -64,11 +64,13 @@ spec:
       protocol: HTTP
     hosts:
     - rabbitone.io
+    - preliminary.rabbitone.io
   - port:
       number: 443
       name: https-default
       protocol: HTTPS
     hosts:
+    - preliminary.rabbitone.io
     - rabbitone.io
     tls:
       mode: SIMPLE

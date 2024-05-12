@@ -11,12 +11,25 @@ spec:
     - name: ollama-storage
       persistentVolumeClaim:
         claimName: ollama-claim
+  nodeSelector:
+    beta.kubernetes.io/instance-type: "n1-standard-8"
   containers:
   - image: ollama/ollama:latest
     name: ollama-pod
+    ports:
+    - containerPort: 11434
+      protocol: TCP
     volumeMounts:
     - mountPath: /root/.ollama
       name: ollama-storage 
+    env:
+    - name: PATH
+      value: /usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: LD_LIBRARY_PATH
+      value: /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+    - name: NVIDIA_DRIVER_CAPABILITIES
+      value: compute,utility
+
     resources: {}
   dnsPolicy: ClusterFirst
   restartPolicy: Always
@@ -50,3 +63,24 @@ spec:
       protocol: TCP
       port: 8000
       targetPort: 11434
+
+--- 
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ollama-virtualservice
+  namespace: ollama
+spec:
+  hosts:
+  - "preliminary.rabbitone.io"
+  gateways:
+  - istio-ingress/helloworld-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: ollama-service
