@@ -1,0 +1,29 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: helloworld-gateway
+  namespace: istio-ingress
+spec:
+  # The selector matches the ingress gateway pod labels.
+  # If you installed Istio using Helm following the standard documentation, this would be "istio=ingress"
+  selector:
+    istio: ingress
+  servers:
+  - port:
+      number: 80
+      name: http-default
+      protocol: HTTP
+    hosts:
+    - rabbitone.io
+    - preliminary.rabbitone.io
+  - port:
+      number: 443
+      name: https-default
+      protocol: HTTPS
+    hosts:
+    - preliminary.rabbitone.io
+    - rabbitone.io
+    tls:
+      mode: SIMPLE
+      credentialName: rabbitone-certificate-prod

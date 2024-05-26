@@ -47,7 +47,7 @@ resource "google_container_node_pool" "n1-pool" {
         }
         local_ssd_count             = 0
         logging_variant             = "DEFAULT"
-        machine_type                = "n1-standard-8"
+        machine_type                = "n1-standard-2"
         metadata                    = {
             "cluster_name"             = "hellocluster"
             "disable-legacy-endpoints" = "true"
