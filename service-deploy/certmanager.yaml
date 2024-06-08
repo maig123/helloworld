@@ -68,4 +68,4 @@ spec:
     - destination:
         port:
           number: 8089
-        host: cm-acme-http-solver-pjhrt
+        host: cm-acme-http-solver-2vvsj
