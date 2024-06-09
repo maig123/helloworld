@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 
-namespace: preliminary
+namespace: preliminary-1
 image: "maig123/homepage:1"
 
 virtualservice:
