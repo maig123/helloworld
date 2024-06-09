@@ -1,0 +1,10 @@
+# Default values for landingpage.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+namespace: preliminary
+image: "maig123/homepage:1"
+
+virtualservice:
+  host: preliminary.rabbitone.io
